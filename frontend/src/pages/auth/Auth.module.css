@@ -1,0 +1,19 @@
+.formContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.formInput {
+  text-align: center;
+  border-radius: 10px;
+  padding: 1em;
+  /* outline: none; */
+  border: none;
+}
+
+.submitButton {
+  margin-top: 1em;
+}

@@ -1,0 +1,17 @@
+.container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 4em;
+  row-gap: 1em;
+}
+
+.controlsContainer {
+  display: flex;
+  flex-direction: row;
+}
+.controlButton {
+  margin-left: 2em;
+  margin-right: 2em;
+}

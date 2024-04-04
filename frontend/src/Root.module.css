@@ -1,0 +1,11 @@
+.nav {
+  position: absolute;
+  top: 1em;
+  right: 2em;
+}
+
+
+
+.signOutButton {
+  margin-left: 2em;
+}

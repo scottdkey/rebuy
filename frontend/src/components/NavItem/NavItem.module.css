@@ -1,0 +1,7 @@
+.navItem {
+  padding-left: 2em;
+}
+
+.navActive {
+  text-decoration: underline;
+}

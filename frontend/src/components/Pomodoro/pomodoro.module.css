@@ -1,0 +1,42 @@
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.input {
+  border-radius: 10px;
+  padding: 1em;
+  margin-bottom: 1em;
+}
+
+.nickname {
+  vertical-align: center;
+  margin-right: 2em;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.pomodoroContainer {
+  padding: 1em;
+  display: flex;
+  row-gap: 1em;
+  flex-direction: row;
+  min-width: 50%;
+}
+
+.btn {
+  margin-left: 1em;
+}
+
+.btn:hover {
+  background-color: rgb(3, 4, 36);
+}
+
+.btn:active{
+  background-color: rgb(16, 20, 129);
+}
+
+.activeBtn {
+  background-color: rgb(18, 36, 86);
+}

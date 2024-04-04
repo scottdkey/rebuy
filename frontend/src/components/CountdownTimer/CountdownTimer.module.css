@@ -1,0 +1,36 @@
+.controlsContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  vertical-align: center;
+  gap: 1em;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  vertical-align: center;
+}
+
+.centered {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.baseRunning {
+  padding-top: 1em;
+  padding-bottom: 1em;
+  padding-left: 2em;
+  padding-right: 2em;
+  border-radius: 10px;
+  margin-bottom: 1em;
+}
+
+.running {
+  background-color: rgb(7, 80, 7);
+}
+.stopped {
+  background-color: rgb(80, 7, 7);
+}

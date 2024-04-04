@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: rebuy
+      POSTGRES_USER: rebuy
+      POSTGRES_PASSWORD: rebuyPassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - rebuyData:/var/lib/postgresql/data
+      - ./sql:/docker-entrypoint-initdb.d
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  rebuyData:
