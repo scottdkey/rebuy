@@ -29,6 +29,6 @@ export const config: IConfig = {
     httpOnly: true,
     secure: true,
     sameSite: "none" // will be strict for production, not setup for this exercise
-  }
+  },
 
 }

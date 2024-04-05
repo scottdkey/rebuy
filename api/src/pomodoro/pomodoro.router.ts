@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { createPomodoro, deletePomodoro, getPomodoroById, getPomodoros, updatePomodoro } from './pomodoro.repository.js'
 import { requireAuth } from '../middleware/requireAuth.middleware.js'
 import asyncHandler from "express-async-handler"
+import { ProtectedResourceError } from '../errors.js'
 
 
 const pomodoroRouter = Router()
@@ -36,7 +37,7 @@ pomodoroRouter.get('/:id', asyncHandler(requireAuth), asyncHandler(async (req, r
   const id = req.params.id
   const response = await getPomodoroById(id)
   if (response && user?.id !== response.userId) {
-    throw { message: "not authorized to access resource", status: 403 }
+    throw ProtectedResourceError
   }
   res.send(response)
 }))
@@ -64,7 +65,7 @@ pomodoroRouter.patch('/:id', asyncHandler(requireAuth), asyncHandler(async (req,
   const existing = await getPomodoroById(body.id)
 
   if (existing.userId !== user?.id) {
-    throw { message: "user id of resource does not match current signed in user, this is a protected resource", status: 403 }
+    throw ProtectedResourceError
 
   }
   const response = await updatePomodoro({ ...body, id })
@@ -75,7 +76,14 @@ pomodoroRouter.patch('/:id', asyncHandler(requireAuth), asyncHandler(async (req,
 
 // delete pomodoro value
 pomodoroRouter.delete('/:id', asyncHandler(requireAuth), asyncHandler(async (req, res) => {
+  const user = req.user
   const id = req.params.id
+  const existing = await getPomodoroById(id)
+
+  if (existing.userId !== user?.id) {
+    throw ProtectedResourceError
+
+  }
 
   const response = await deletePomodoro(id)
   // if response is true send a 200, if false send a 400 bad request

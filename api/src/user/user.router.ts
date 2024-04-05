@@ -59,8 +59,10 @@ userRouter.post('/', asyncHandler(async (req, res) => {
 // this is unused at this time, but provides an example of how a username or password might be updated
 userRouter.patch('/', asyncHandler(requireAuth), asyncHandler(async (req, res) => {
   const body: IUpdateUser = updateUserValidator.parse(req.body)
-  if (req.user) {
-    const updatedUser = await updateUser(body, req.user.id)
+  const user = req.user
+
+  if (user) {
+    const updatedUser = await updateUser(body, user.id)
     const scrubbedUser: JwtPayload = { id: updatedUser.id, username: updatedUser.username }
     const signedJwt = signJWT(scrubbedUser)
     res.cookie(config.cookieName, signedJwt, config.cookieOptions)

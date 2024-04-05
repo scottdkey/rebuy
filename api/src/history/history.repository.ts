@@ -6,7 +6,7 @@ import { query } from "../database/database.js"
  * @returns All tasks tied to a particular user
  */
 export const getHistoryByUserId = async (userId: string) => {
-  return await query<ITask[]>(`SELECT * FROM tasks WHERE user_id=$1;`, [userId])
+  return await query<IHistory[]>(`SELECT * FROM history WHERE user_id=$1;`, [userId])
 }
 
 
@@ -16,7 +16,7 @@ export const getHistoryByUserId = async (userId: string) => {
  * @returns single task
  */
 export const getHistoryById = async (id: string) => {
-  const res = await query<ITask>(`SELECT * FROM tasks WHERE id = $1;`, [id])
+  const res = await query<IHistory>(`SELECT * FROM history WHERE id = $1;`, [id])
   return res[0]
 }
 
@@ -26,8 +26,8 @@ export const getHistoryById = async (id: string) => {
  * @param userId 
  * @returns task
  */
-export const createHistory = async ({ taskName, description }: ICreateTask, userId: string) => {
-  const res = await query<ITask>(`INSERT INTO tasks (user_id, task_name, description) VALUES ($1, $2, $3) RETURNING *;`, [userId, taskName, description])
+export const createHistory = async ({ startTime }: ICreateHistory, userId: string) => {
+  const res = await query<IHistory>(`INSERT INTO history (user_id, start_time) VALUES ($1, $2) RETURNING *;`, [userId, startTime])
   return res[0]
 }
 
@@ -37,8 +37,8 @@ export const createHistory = async ({ taskName, description }: ICreateTask, user
  * @param id task id
  * @returns task
  */
-export const updateHistory = async ({ taskName, description, complete }: IUpdateTask, id: string) => {
-  const res = await query<ITask>(`UPDATE tasks SET task_name=$1, description=$2, complete=$3 WHERE id=$4 RETURNING *;`, [taskName, description, complete, id])
+export const updateHistory = async ({ endTime, completedTasks, pauses }: IUpdateHistory, id: string) => {
+  const res = await query<IHistory>(`UPDATE history SET end_time=$1, completed_tasks=$2, pauses=$3 WHERE id=$4 RETURNING *;`, [endTime, completedTasks, pauses, id])
   return res[0]
 }
 
@@ -49,7 +49,7 @@ export const updateHistory = async ({ taskName, description, complete }: IUpdate
  */
 export const deleteHistory = async (id: string) => {
   try {
-    await query(`DELETE FROM tasks WHERE id=$1;`, [id])
+    await query(`DELETE FROM history WHERE id=$1;`, [id])
     return true
   } catch (e) {
     console.error(e, 'unable to delete task')

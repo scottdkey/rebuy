@@ -10,3 +10,6 @@ CREATE TABLE users (
 -- Create a trigger to call the update_updated_at function on update
 CREATE TRIGGER users_updated_at_trigger BEFORE
 UPDATE ON users FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+CREATE UNIQUE INDEX idx_unique_username ON users (username);
+CREATE UNIQUE INDEX idx_unique_email ON users (email);

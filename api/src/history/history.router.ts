@@ -4,16 +4,19 @@ import { z } from 'zod'
 import asyncHandler from "express-async-handler"
 import { requireAuth } from '../middleware/requireAuth.middleware.js'
 import { createHistory, deleteHistory, getHistoryById, getHistoryByUserId, updateHistory } from './history.repository.js'
+import { ProtectedResourceError } from '../errors.js'
 
 
 const historyRouter = Router()
 
 const createValidator = z.object({
-  taskName: z.string(),
-  description: z.string()
+  startTime: z.string().datetime()
 })
-const updateValidator = createValidator.extend({
-  complete: z.boolean()
+const updateValidator = z.object({
+  endTime: z.string().datetime().nullable(),
+  completedTasks: z.array(z.object({ taskName: z.string(), description: z.string() })),
+  pauses: z.array(z.string().datetime())
+
 })
 
 // get all history rows by userId
@@ -32,7 +35,7 @@ historyRouter.get('/:id', asyncHandler(requireAuth), asyncHandler(async (req, re
   const response = await getHistoryById(id)
   // ensure that only the user that created the value can access it
   if (response && user?.id !== response.userId) {
-    throw { message: "user id of resource does not match current signed in user, this is a protected resource", status: 403 }
+    throw ProtectedResourceError
   }
   res.send(response)
 }))
@@ -59,7 +62,7 @@ historyRouter.patch('/:id', asyncHandler(requireAuth), asyncHandler(async (req, 
   const existing = await getHistoryById(id)
 
   if (existing.userId !== user?.id) {
-    throw { message: "user id of resource does not match current signed in user, this is a protected resource", status: 403 }
+    throw ProtectedResourceError
 
   }
   const response = await updateHistory(body, id)
@@ -74,8 +77,9 @@ historyRouter.delete('/:id', asyncHandler(requireAuth), asyncHandler(async (req,
   const id = req.params.id
   const existing = await getHistoryById(id)
 
-  if (user && existing && user?.id !== existing.userId) {
-    throw { message: "user id of resource does not match current signed in user, this is a protected resource", status: 403 }
+  if (existing.userId !== user?.id) {
+    throw ProtectedResourceError
+
   }
 
 

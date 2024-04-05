@@ -4,6 +4,7 @@ import { z } from 'zod'
 import asyncHandler from "express-async-handler"
 import { requireAuth } from '../middleware/requireAuth.middleware.js'
 import { createTask, deleteTask, getTaskById, getTasksByUserId, updateTask } from './task.repository.js'
+import { ProtectedResourceError } from '../errors.js'
 
 
 const tasksRouter = Router()
@@ -33,7 +34,7 @@ tasksRouter.get('/:id', asyncHandler(requireAuth), asyncHandler(async (req, res)
   const response = await getTaskById(id)
   // ensure that only the user that created the value can access it
   if (response && user?.id !== response.userId) {
-    throw { message: "not authorized to access resource", status: 403 }
+    throw ProtectedResourceError
   }
   res.send(response)
 }))
@@ -60,7 +61,7 @@ tasksRouter.patch('/:id', asyncHandler(requireAuth), asyncHandler(async (req, re
   const existing = await getTaskById(id)
 
   if (existing.userId !== user?.id) {
-    throw { message: "user id of resource does not match current signed in user, this is a protected resource", status: 403 }
+    throw ProtectedResourceError
 
   }
   const response = await updateTask(body, id)
@@ -74,9 +75,9 @@ tasksRouter.delete('/:id', asyncHandler(requireAuth), asyncHandler(async (req, r
   const user = req.user
   const id = req.params.id
   const existing = await getTaskById(id)
-  
-  if (user && existing && user?.id !== existing.userId) {
-    throw { message: "you do not have access to modify this resource", status: 403 }
+
+  if (user?.id !== existing.userId) {
+    throw ProtectedResourceError
   }
 
 

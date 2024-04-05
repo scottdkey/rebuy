@@ -1,0 +1,1 @@
+export const ProtectedResourceError = { message: "user id of resource does not match current signed in user, this is a protected resource", status: 403 }
