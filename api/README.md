@@ -3,7 +3,7 @@
 
 ## Environment Variables
 
-Please copy the `.env-example` and rename it to `.env`, if you decide to change any of the values either in that file, or in the `docker-compose` file at the top level, please ensure that all the values line up in both places.
+Please copy the [`.env-example`](./.env-example) and rename it to `.env`, if you decide to change any of the values either in that file, or in the `docker-compose` file at the top level, please ensure that all the values line up in both places.
 
 Please run the all following commands from the `api` folder of this repository.
 
@@ -31,6 +31,8 @@ To run in development mode please run both the typescript watch, and the applica
 
 ```bash
 npm run dev
+```
+```bash
 npm run watch
 ```
 
