@@ -23,11 +23,14 @@ export const query = async <T extends pg.QueryResultRow>(text: string, params?: 
     if (data.rows) {
       return data.rows.map((row: any) => {
         const incoming = row
-        //parse dates to isoString automatically
-        if (incoming["created_at"]) incoming["created_at"] = new Date(incoming['created_at']).toISOString()
-        if (incoming["updated_at"]) incoming["updated_at"] = new Date(incoming['updated_at']).toISOString()
 
-        // automatically map any snake cause value to camelcase
+        //parse dates to isoString automatically
+        const dateValuesToParse = ["created_at", "updated_at", "start_time", "end_time"]
+        dateValuesToParse.forEach(value => {
+          if (incoming[value]) incoming[value] = new Date(incoming[value]).toISOString()
+        })
+        // automatically map any snakeCase key to camelCase to conform with javascript standard
+        // leave values alone
         return snakeToCamel(incoming) as T
       })
     } else {

@@ -6,7 +6,8 @@ import { query } from "../database/database.js"
  * @returns All tasks tied to a particular user
  */
 export const getHistoryByUserId = async (userId: string) => {
-  return await query<IHistory[]>(`SELECT * FROM history WHERE user_id=$1;`, [userId])
+  return await query<IHistory>(`SELECT * FROM history WHERE user_id=$1;`, [userId])
+
 }
 
 
@@ -17,6 +18,7 @@ export const getHistoryByUserId = async (userId: string) => {
  */
 export const getHistoryById = async (id: string) => {
   const res = await query<IHistory>(`SELECT * FROM history WHERE id = $1;`, [id])
+
   return res[0]
 }
 

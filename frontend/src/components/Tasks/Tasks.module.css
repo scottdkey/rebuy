@@ -8,6 +8,8 @@
   min-height: 400px;
 }
 
+
+
 .title {
   margin-top: 0px;
 }
@@ -33,6 +35,10 @@
   vertical-align: center;
   align-items: center;
   margin-right: auto;
+}
+
+.HiddenContainer {
+  display: none
 }
 
 .TaskName {

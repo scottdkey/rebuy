@@ -8,6 +8,11 @@ import {
 } from "../../hooks/task.hooks.ts";
 import { Tooltip } from "react-tooltip";
 import styles from "./Tasks.module.css";
+import {
+  useGetHistoryById,
+  useUpdateHistoryMutation,
+} from "../../hooks/history.hooks.ts";
+import { useHistoryStore } from "../../stores/history.store.ts";
 
 export const Task = ({ id }: { id?: string }) => {
   const { data: task, refetch } = useGetTaskById(id);
@@ -16,6 +21,11 @@ export const Task = ({ id }: { id?: string }) => {
   const { mutateAsync: updateTask } = useUpdateTaskMutation(id);
   const { mutateAsync: createTask } = useCreateTaskMutation();
   const { mutateAsync: deleteTask } = useDeleteTaskMutation(id);
+  // setHistoryId is not needed in this context, just the saved value
+  const historyId = useHistoryStore((s) => s.historyId);
+  const { data: history, refetch: refetchHistory } =
+    useGetHistoryById(historyId);
+  const { mutateAsync: updateHistory } = useUpdateHistoryMutation(historyId);
   const [editing, setEditing] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -26,7 +36,6 @@ export const Task = ({ id }: { id?: string }) => {
     };
 
     if (!id) {
-      console.log("createTask", data);
       await createTask(data);
       await refetchAll();
     }
@@ -40,6 +49,9 @@ export const Task = ({ id }: { id?: string }) => {
     setEditing(false);
   };
 
+  // in this component I've opted not to use all handlers(there is still a submitHandler)
+  // the reason being is that the logic is much simpler than the CountdownTimer.tsx
+  // it is much easier to visually parse what is happening without that extra overhead
   if (editing) {
     return (
       <>
@@ -72,12 +84,36 @@ export const Task = ({ id }: { id?: string }) => {
           name="complete"
           checked={task.complete}
           onChange={async (e) => {
+            const value = e.target.checked;
             await updateTask({
               taskName: task.taskName,
               description: task.description,
-              complete: e.target.checked,
+              complete: value,
             });
             await refetch();
+            // ensure history is defined and the current session hasn't ended
+            if (history && history.endTime === null) {
+              let completedTasks = history.completedTasks;
+              if (value === true) {
+                completedTasks.push({
+                  id: task.id,
+                  taskName: task.taskName,
+                  description: task.description,
+                });
+              }
+              if (value === false) {
+                completedTasks = completedTasks.filter(
+                  (ct) => ct.id !== task.id
+                );
+              }
+
+              await updateHistory({
+                completedTasks,
+                pauses: history.pauses,
+                endTime: history.endTime,
+              });
+              refetchHistory();
+            }
           }}
         />
         <h3 className={`${styles.TaskName} task-${task.id}`}>
@@ -107,9 +143,12 @@ export const Task = ({ id }: { id?: string }) => {
     );
   }
 
-  return (
-    <>
-      <button onClick={() => setEditing(true)}>create</button>
-    </>
-  );
+  if (!id) {
+    return (
+      <>
+        <button onClick={() => setEditing(true)}>create</button>
+      </>
+    );
+  }
+  return <>something went wrong</>;
 };

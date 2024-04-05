@@ -14,7 +14,7 @@ const createValidator = z.object({
 })
 const updateValidator = z.object({
   endTime: z.string().datetime().nullable(),
-  completedTasks: z.array(z.object({ taskName: z.string(), description: z.string() })),
+  completedTasks: z.array(z.object({ id: z.string().uuid(), taskName: z.string(), description: z.string() })),
   pauses: z.array(z.string().datetime())
 
 })

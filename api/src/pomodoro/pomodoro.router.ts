@@ -69,7 +69,6 @@ pomodoroRouter.patch('/:id', asyncHandler(requireAuth), asyncHandler(async (req,
 
   }
   const response = await updatePomodoro({ ...body, id })
-  console.log(response)
   res.send(response)
 }))
 
