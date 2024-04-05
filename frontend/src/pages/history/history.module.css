@@ -5,3 +5,41 @@
   align-items: center;
   margin-top: 4em;
 }
+
+.containerWrap {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-left: 2em;
+  margin-right: 2em;
+  justify-content: center;
+}
+
+.rowContainer {
+  display: flex;
+  flex-direction: row;
+  /* align-items: flex-start; */
+  /* justify-content: flex-start; */
+  background-color: rgba(0, 37, 69, 0.442);
+  margin: 0.5em;
+  padding: 1em;
+  border-radius: 10px;
+}
+
+.rowContainer:hover {
+  background-color: rgba(12, 78, 135, 0.442);
+}
+
+.rowItem {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  min-width: 14em;
+  padding-right: auto;
+  max-width: 16em;
+}
+
+.deleteButton {
+  margin-top: auto;
+}
