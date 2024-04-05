@@ -4,7 +4,7 @@
   flex-direction: column;
   align-items: center;
   margin-top: 4em;
-  row-gap: 1em;
+  gap: 1em;
 }
 
 .controlsContainer {
@@ -14,4 +14,20 @@
 .controlButton {
   margin-left: 2em;
   margin-right: 2em;
+}
+
+.info {
+  display: flex;
+  flex-direction: row;
+  gap: 3em;
+  justify-content: center;
+  vertical-align: center;
+  align-items: center;
+  margin-top: 2em;
+}
+
+@media screen and (max-width: 600px) {
+  .info {
+    flex-direction: column;
+  }
 }

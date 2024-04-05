@@ -4,6 +4,7 @@ import { formatTime } from "../../util/formatTimeForTimers.util.ts";
 import styles from "./CountdownTimer.module.css";
 
 export const CountdownTimer = () => {
+  // this state can be passed from anywhere, so there is no need to pass props around
   const active = usePomodoroStore((state) => state.active);
   const [timer, setTimer] = useState(active ? active.timerTime : 0);
   const [breakTimer, setBreakTimer] = useState(0);
@@ -61,9 +62,9 @@ export const CountdownTimer = () => {
   if (active) {
     return (
       <div className={styles.container}>
-        <h3 className={styles.centered}>{active?.nickname} timer</h3>
+        <h3 className={`${styles.title}`}>{active?.nickname} timer</h3>
         <h2
-          className={`${styles.centered} ${styles.baseRunning} ${
+          className={`${styles.baseRunning} ${
             isRunning ? styles.running : styles.stopped
           }`}
         >
@@ -100,7 +101,8 @@ export const CountdownTimer = () => {
               pause
             </button>
           ) : null}
-          {isRunning && breakIsRunning === false ? (
+          {(isRunning && breakIsRunning === false) ||
+          (breakIsRunning === false && timer < active.timerTime) ? (
             <>
               <button
                 onClick={() => {

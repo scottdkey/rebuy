@@ -7,6 +7,8 @@ import asyncHandler from "express-async-handler"
 
 const pomodoroRouter = Router()
 
+
+// the validators ensure that we only get the types of values we expect
 const createValidator = z.object({
   nickname: z.string(),
   timerTime: z.number(),
@@ -14,17 +16,12 @@ const createValidator = z.object({
   longBreakTime: z.number()
 })
 
-const updateValidator = z.object({
-  id: z.string().uuid(),
-  nickname: z.string(),
-  timerTime: z.number(),
-  shortBreakTime: z.number(),
-  longBreakTime: z.number()
+const updateValidator = createValidator.extend({
+  id: z.string().uuid()
 })
 
-/**
- * get all users pomodoro
- */
+
+// get all pomodoros by userId
 pomodoroRouter.get('/', asyncHandler(requireAuth), asyncHandler(async (req, res) => {
   const user = req.user
   const response = await getPomodoros(user?.id)
@@ -32,9 +29,8 @@ pomodoroRouter.get('/', asyncHandler(requireAuth), asyncHandler(async (req, res)
   res.send(response)
 }))
 
-/**
- * get pomodoro by id, restricted by user
- */
+
+//get pomodoro by id, restricted by user
 pomodoroRouter.get('/:id', asyncHandler(requireAuth), asyncHandler(async (req, res) => {
   const user = req.user
   const id = req.params.id
@@ -46,9 +42,8 @@ pomodoroRouter.get('/:id', asyncHandler(requireAuth), asyncHandler(async (req, r
 }))
 
 
-/**
- * create pomodoro
- */
+// create pomodoro value
+// this requires auth to ensure that only known users can access this and other resources
 pomodoroRouter.post('/', asyncHandler(requireAuth), asyncHandler(async (req, res) => {
   // user will always exist with the requireAuth Middleware, the error is handled from there as well
   const user = req.user
@@ -60,9 +55,7 @@ pomodoroRouter.post('/', asyncHandler(requireAuth), asyncHandler(async (req, res
   }
 }))
 
-/**
- * update pomodoro by id
- */
+//  update pomodoro value
 pomodoroRouter.patch('/:id', asyncHandler(requireAuth), asyncHandler(async (req, res) => {
   const id = req.params.id
   const user = req.user
@@ -80,9 +73,7 @@ pomodoroRouter.patch('/:id', asyncHandler(requireAuth), asyncHandler(async (req,
 }))
 
 
-/**
- * delete pomodoro
- */
+// delete pomodoro value
 pomodoroRouter.delete('/:id', asyncHandler(requireAuth), asyncHandler(async (req, res) => {
   const id = req.params.id
 

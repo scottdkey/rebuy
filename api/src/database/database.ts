@@ -8,6 +8,12 @@ import { snakeToCamel } from "../util/snakeToCamel.util.js";
 // string interpolation should never be used in this application, as that could cause issues with SQL injection, the PG library automatically handles that issue for us, while maintaining a simple DSL to write queries as well as type the results
 const pool = new pg.Pool(config.postgres)
 
+/**
+ * Function to query database
+ * @param text query text, should conform to PostgreSQL standard
+ * @param params array of params, can be any type
+ * @returns value typed to generic type passed in. if Nothing is passed this will be unknown type
+ */
 export const query = async <T extends pg.QueryResultRow>(text: string, params?: any[]) => {
   const client = await pool.connect()
   try {

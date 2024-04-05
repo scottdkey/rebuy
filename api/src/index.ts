@@ -2,7 +2,7 @@ import express from "express"
 import userRouter from "./user/user.router.js"
 import cookieParser from 'cookie-parser';
 import pomodoroRouter from "./pomodoro/pomodoro.router.js"
-import tasksRouter from "./tasks/tasks.router.js"
+import taskRouter from "./task/task.router.js"
 import authRouter from "./auth/auth.router.js"
 import cors from "cors";
 import { ErrorHandler } from "./middleware/errorHandler.middleware.js";
@@ -27,7 +27,7 @@ app.use(express.json())
 const routers = [
   { path: "/user", router: userRouter },
   { path: "/pomodoro", router: pomodoroRouter },
-  { path: "/tasks", router: tasksRouter },
+  { path: "/task", router: taskRouter },
   { path: "/auth", router: authRouter },
 ]
 

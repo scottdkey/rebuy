@@ -14,5 +14,5 @@ export const requireAuth = async (req: Request, _: Response, next: NextFunction)
 
     req.user = { id: validated.id, username: validated.username }
   }
-  next()
+  await next()
 }

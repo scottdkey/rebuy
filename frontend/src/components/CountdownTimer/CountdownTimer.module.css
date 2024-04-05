@@ -1,22 +1,21 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  min-height: 400px;
+}
+
 .controlsContainer {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  vertical-align: center;
   gap: 1em;
 }
-.container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  vertical-align: center;
-}
 
-.centered {
-  margin-top: 0px;
-  margin-bottom: 0px;
-  margin-left: auto;
-  margin-right: auto;
+.title {
+  margin: 0px;
+  padding: 0px;
 }
 
 .baseRunning {
@@ -33,4 +32,10 @@
 }
 .stopped {
   background-color: rgb(80, 7, 7);
+}
+
+@media screen and (max-width: 600px) {
+  .container {
+    min-height: unset;
+  }
 }

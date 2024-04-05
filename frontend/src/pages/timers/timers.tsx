@@ -5,6 +5,7 @@ import styles from "./timers.module.css";
 import Modal from "../../components/Modal/Modal.tsx";
 import { CountdownTimer } from "../../components/CountdownTimer/CountdownTimer.tsx";
 import { PropsWithChildren } from "react";
+import { Tasks } from "../../components/Tasks/Tasks.tsx";
 
 export const Timers = () => {
   const isAuth = useAuthStore((state) => state.auth);
@@ -68,7 +69,10 @@ export const Timers = () => {
           </div>
         </div>
 
-        <CountdownTimer />
+        <div className={styles.info}>
+          <CountdownTimer />
+          <Tasks />
+        </div>
       </Base>
     );
   }

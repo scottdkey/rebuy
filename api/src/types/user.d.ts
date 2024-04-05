@@ -11,6 +11,8 @@ interface ICreateUser {
 }
 
 interface IUpdateUser extends ICreateUser {
+  username?: string
+  email?: string
   existingPassword?: string
   password?: string
 }
@@ -20,3 +22,5 @@ interface JwtPayload {
   id: string
   username: string
 }
+
+interface IGetUser { email?: string, id?: string, username?: string }

@@ -16,10 +16,12 @@ const createUserValidator = z.object({
   email: z.string().email()
 })
 const updateUserValidator = z.object({
-  username: z.string(),
-  password: z.string(),
-  email: z.string().email(),
-  existingPassword: z.string().optional()
+  // allow for partial updates
+  // password and existing password must be sent together
+  password: z.string().optional(),
+  existingPassword: z.string().optional(),
+  username: z.string().optional(),
+  email: z.string().email().optional()
 })
 
 //get current user, due to require auth if a user is present, we can pull that id out and get the correct information
@@ -55,7 +57,7 @@ userRouter.post('/', asyncHandler(async (req, res) => {
 
 /// update current user
 // this is unused at this time, but provides an example of how a username or password might be updated
-userRouter.put('/', asyncHandler(requireAuth), asyncHandler(async (req, res) => {
+userRouter.patch('/', asyncHandler(requireAuth), asyncHandler(async (req, res) => {
   const body: IUpdateUser = updateUserValidator.parse(req.body)
   if (req.user) {
     const updatedUser = await updateUser(body, req.user.id)

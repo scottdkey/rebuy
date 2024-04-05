@@ -1,13 +1,23 @@
 import { query } from "../database/database.js"
 import { comparePassword, hashPassword } from "../util/password.util.js"
 
-export const createUser = async ({ username, email, password }: { username: string, email: string, password: string }) => {
+/**
+ * Function to create user
+ * @param param0 user information
+ * @returns user value, please scrub before passing to client
+ */
+export const createUser = async ({ username, email, password }: ICreateUser) => {
   const result = await query<IUser>(`INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *;`, [username, email, password])
   return result[0]
 }
 
 
-//update user with partial updates
+/**
+ * Update user, partial updates allowed
+ * @param user update user value
+ * @param id user id
+ * @returns user information, please scrub before passing back to client
+ */
 export const updateUser = async (user: IUpdateUser, id: string) => {
   const currentUser = await getUser({ id })
   const updates: string[] = []
@@ -23,6 +33,9 @@ export const updateUser = async (user: IUpdateUser, id: string) => {
     if (verified === false) throw { message: "unable to verify current password, will not proceed", status: 403 }
     updates.push(await hashPassword(user.password))
     // allow for partial updates
+    // append a comma if something else is in array
+    // otherwise don't
+    // this will not occur for username, as it is first, so this is not done there
     queryText = `${queryText}${updates.length > 1 ? "," : ""} password=$${updates.length}`
   }
   if (user.email) {
@@ -43,8 +56,12 @@ export const getUsers = async () => {
 }
 
 
-// allow for multiple queries for user based in various values like email, id, or username
-export const getUser = async ({ email, id, username }: { email?: string, id?: string, username?: string }) => {
+/**
+ * A function to get user information
+ * @param param0 object containing which value is being queried, order of query will always be email, id, username in that order. If nothing is passed this will result in an error
+ * @returns user information, will include the full object, please scrub user if being passed to client
+ */
+export const getUser = async ({ email, id, username }: IGetUser) => {
   let result: IUser | null = null
   if (email) {
     const r = await query<IUser>(`SELECT * FROM users WHERE email=$1`, [email])
@@ -59,7 +76,9 @@ export const getUser = async ({ email, id, username }: { email?: string, id?: st
     result = r[0]
   }
   if (result === null) {
-    console.error("unable to find user given constraints")
+    const message = "unable to find user given constraints"
+    console.error(message, 'get user error')
+    throw { message, status: 404 }
   }
   return result
 }
