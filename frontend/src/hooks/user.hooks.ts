@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { useAuthStore } from "../stores/auth.store.ts";
 import { useNavigate } from "react-router-dom";
+import { HandleAxiosError } from "../util/HandleAxiosError.util.ts";
 
 
 export const useGetCurrentUserQuery = () => {
@@ -48,9 +49,8 @@ export const useSignUpMutation = () => {
       nav("/timers");
     },
     onError: (err: AxiosError<Message>) => {
-      console.error(err, "unable to sign in");
       removeUser();
-      alert(JSON.stringify(err.response?.data.message, null, 2) || err.message);
+      HandleAxiosError(err)
     },
   })
 };

@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
+import { HandleAxiosError } from "../util/HandleAxiosError.util.ts";
 
 export const useGetAllTasks = () => useQuery({
   queryKey: ['tasks'],
@@ -11,7 +12,7 @@ export const useGetAllTasks = () => useQuery({
   }
 })
 export const useGetTaskById = (id?: string) => useQuery({
-  queryKey: [`pomodoro-${id}`],
+  queryKey: [`task-${id}`],
   queryFn: async () => {
     const res = await axios.get<ITask>(`http://localhost:3000/task/${id}`, {
       withCredentials: true
@@ -28,9 +29,7 @@ export const useCreateTaskMutation = () => useMutation({
     })
     return res.data
   },
-  onError: (err: AxiosError<Message>) => {
-    alert(JSON.stringify(err.response?.data.message, null, 2) || err.message);
-  }
+  onError: HandleAxiosError
 })
 export const useUpdateTaskMutation = (id?: string) => useMutation({
   mutationFn: async (data: IUpdateTask) => {
@@ -39,9 +38,7 @@ export const useUpdateTaskMutation = (id?: string) => useMutation({
     })
     return res.data
   },
-  onError: (err: AxiosError<Message>) => {
-    alert(JSON.stringify(err.response?.data.message, null, 2) || err.message);
-  }
+  onError: HandleAxiosError
 })
 export const useDeleteTaskMutation = (id?: string) => useMutation({
   mutationFn: async () => {
@@ -50,7 +47,5 @@ export const useDeleteTaskMutation = (id?: string) => useMutation({
     })
     return res.data
   },
-  onError: (err: AxiosError<Message>) => {
-    alert(JSON.stringify(err.response?.data.message, null, 2) || err.message);
-  }
+  onError: HandleAxiosError
 })

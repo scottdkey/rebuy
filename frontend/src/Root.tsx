@@ -18,12 +18,12 @@ export const Root = () => {
         <div className={styles.nav}>
           <NavItem path="/" label="Home" />
           <NavItem path="/timers" label="Timers" />
+          <NavItem path="/history" label="History" />
           {/* if authorized render a sign out button, otherwise give signin or signup options */}
           {isAuth ? (
             <>
               <a
                 onClick={async () => {
-                  
                   removeUser();
                   nav("/");
                 }}

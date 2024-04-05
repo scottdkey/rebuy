@@ -1,11 +1,8 @@
-import express from "express"
-import userRouter from "./user/user.router.js"
 import cookieParser from 'cookie-parser';
-import pomodoroRouter from "./pomodoro/pomodoro.router.js"
-import taskRouter from "./task/task.router.js"
-import authRouter from "./auth/auth.router.js"
 import cors from "cors";
+import express from "express";
 import { ErrorHandler } from "./middleware/errorHandler.middleware.js";
+import { routers } from "./routers.js";
 
 const app = express()
 const port = 3000
@@ -24,19 +21,14 @@ app.use(express.json())
 
 
 //programmatically add routers
-const routers = [
-  { path: "/user", router: userRouter },
-  { path: "/pomodoro", router: pomodoroRouter },
-  { path: "/task", router: taskRouter },
-  { path: "/auth", router: authRouter },
-]
-
 routers.forEach(({ path, router }) => {
   console.debug(`register router ${path}`)
   app.use(path, router)
 })
 
 // top level error handler, to use this properly express-async-handler must be used
+// this must be added after the routers to be effective
+// if you wanted a request logger, it should be added before the routers
 app.use(ErrorHandler)
 
 try {

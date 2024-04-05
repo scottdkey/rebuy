@@ -11,6 +11,7 @@ import { Index } from "./pages/index/index.tsx";
 import { Timers } from "./pages/timers/timers.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { PomodoroHistory } from "./pages/history/history.tsx";
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,11 @@ const router = createBrowserRouter([
         //this is the location of the pomodoro timers and settings
         path: "/timers",
         element: <Timers />,
+      },
+      {
+        //this is the location of the pomodoro history
+        path: "/history",
+        element: <PomodoroHistory />,
       },
     ],
   },

@@ -4,19 +4,19 @@ import { HandleAxiosError } from "../util/HandleAxiosError.util.ts";
 
 
 
-export const useGetAllPomodoros = () => useQuery({
-  queryKey: ['pomodoros'],
+export const useGetAllHistory = () => useQuery({
+  queryKey: ['history'],
   queryFn: async () => {
-    const res = await axios.get<IPomodoro[]>('http://localhost:3000/pomodoro', {
+    const res = await axios.get<IPomodoro[]>('http://localhost:3000/history', {
       withCredentials: true
     })
     return res.data
   }
 })
 export const useGetPomodoroById = (id?: string) => useQuery({
-  queryKey: [`pomodoro-${id}`],
+  queryKey: [`history-${id}`],
   queryFn: async () => {
-    const res = await axios.get<IPomodoro>(`http://localhost:3000/pomodoro/${id}`, {
+    const res = await axios.get<IPomodoro>(`http://localhost:3000/history/${id}`, {
       withCredentials: true
     })
     return res.data
@@ -26,7 +26,7 @@ export const useGetPomodoroById = (id?: string) => useQuery({
 
 export const useCreatePomodoroMutation = () => useMutation({
   mutationFn: async (data: ICreatePomodoro) => {
-    const res = await axios.post<IPomodoro>(`http://localhost:3000/pomodoro`, data, {
+    const res = await axios.post<IPomodoro>(`http://localhost:3000/history`, data, {
       withCredentials: true
     })
     return res.data
@@ -35,7 +35,7 @@ export const useCreatePomodoroMutation = () => useMutation({
 })
 export const useUpdatePomodoroMutation = (id?: string) => useMutation({
   mutationFn: async (data: IUpdatePomodoro) => {
-    const res = await axios.patch<IPomodoro>(`http://localhost:3000/pomodoro/${id}`, data, {
+    const res = await axios.patch<IPomodoro>(`http://localhost:3000/history/${id}`, data, {
       withCredentials: true
     })
     return res.data
@@ -44,7 +44,7 @@ export const useUpdatePomodoroMutation = (id?: string) => useMutation({
 })
 export const useDeletePomodoroMutation = (id?: string) => useMutation({
   mutationFn: async () => {
-    const res = await axios.delete<boolean>(`http://localhost:3000/pomodoro/${id}`, {
+    const res = await axios.delete<boolean>(`http://localhost:3000/history/${id}`, {
       withCredentials: true
     })
     return res.data
