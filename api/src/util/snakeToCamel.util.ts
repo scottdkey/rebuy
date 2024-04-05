@@ -8,6 +8,12 @@ type SnakeToCamel<T> = T extends object
   }
   : T;
 
+// JSDoc style comments in typescript provide quite a bit of value. Typescript will provide types, the JSDoc comments will provide additional context when the function name is moused over(in VSCode/Intellij Etc). Give it a try
+/**
+ * A function to map snake case to camel case
+ * @param obj any object type
+ * @returns will return the generic type passed in, this is primarily used as part of the database to ensure that the database return types conform to JS standard camelcase
+ */
 export function snakeToCamel<T>(obj: T): SnakeToCamel<T> {
   if (obj === null || typeof obj !== 'object') {
     return obj as SnakeToCamel<T>;

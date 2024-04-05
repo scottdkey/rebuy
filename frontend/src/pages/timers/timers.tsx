@@ -21,6 +21,14 @@ export const Timers = () => {
     );
   };
 
+  if (isAuth === false) {
+    return (
+      <Base>
+        <p>You must be signed in to access this resource</p>
+      </Base>
+    );
+  }
+
   // using various if statements we can setup various states for this component
   if (isLoading) {
     return (
@@ -64,10 +72,9 @@ export const Timers = () => {
       </Base>
     );
   }
-
   return (
     <Base>
-      <p>You must be signed in to access this resource</p>
+      <p>something went wrong</p>
     </Base>
   );
 };

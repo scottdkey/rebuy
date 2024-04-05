@@ -18,7 +18,12 @@ export const useAuthStore = create<AuthState>()(
         auth: false,
         user: null,
         setUser: (user) => set({ user, auth: true }),
-        removeUser: () => set({ user: null, auth: false })
+        removeUser: () => {
+
+          document.cookie =
+            "rebuy=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+          set({ user: null, auth: false })
+        }
       }),
       {
         name: 'auth-storage',

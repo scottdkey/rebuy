@@ -1,8 +1,8 @@
-import { useSignUpMutation } from "../../hooks/auth.hooks.ts";
+import { useSignUpMutation } from "../../hooks/user.hooks.ts";
 import styles from "./Auth.module.css";
 
 export const SignUp = () => {
-  const  {mutateAsync} = useSignUpMutation()
+  const { mutateAsync } = useSignUpMutation();
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = {
@@ -10,7 +10,7 @@ export const SignUp = () => {
       password: event.currentTarget.password.value,
       email: event.currentTarget.email.value,
     };
-    await mutateAsync(data)
+    await mutateAsync(data);
   };
   return (
     <form className={styles.formContainer} onSubmit={handleSubmit}>

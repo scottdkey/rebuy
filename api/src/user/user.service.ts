@@ -1,9 +1,9 @@
 import { hashPassword } from "../util/password.util.js"
-import { createUser, getUser, updateUser } from "./user.repository.js"
+import { createUser as repoCreateUser, getUser, updateUser as repoUpdateUser } from "./user.repository.js"
 
 
 
-export const validateAndCreateUser = async (user: ICreateUser) => {
+export const createUser = async (user: ICreateUser) => {
   const password = await hashPassword(user.password)
   const existingUser = await getUser({ username: user.username, email: user.email })
   if (existingUser) {
@@ -12,9 +12,9 @@ export const validateAndCreateUser = async (user: ICreateUser) => {
       message: "must have unique username or email, one of those values exists"
     }
   }
-  return await createUser({ ...user, password })
+  return await repoCreateUser({ ...user, password })
 }
 
-export const validateAndUpdateUser = async (user: IUpdateUser, id: string) => {
-  return await updateUser(user, id)
+export const updateUser = async (user: IUpdateUser, id: string) => {
+  return await repoUpdateUser(user, id)
 }

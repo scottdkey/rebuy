@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { z } from 'zod'
 import { createPomodoro, deletePomodoro, getPomodoroById, getPomodoros, updatePomodoro } from './pomodoro.repository.js'
 import { requireAuth } from '../middleware/requireAuth.middleware.js'
+import asyncHandler from "express-async-handler"
 
 
 const pomodoroRouter = Router()
@@ -24,100 +25,70 @@ const updateValidator = z.object({
 /**
  * get all users pomodoro
  */
-pomodoroRouter.get('/', requireAuth, async (req, res) => {
-  try {
-    const user = req.user
-    const response = await getPomodoros(user?.id)
-    res.send(response)
-  } catch (e) {
-    console.error(e, 'get all pomodoro error')
-    res.send(e.message || { message: "something went wrong" }).status(e.status || 500)
-  }
-})
+pomodoroRouter.get('/', asyncHandler(requireAuth), asyncHandler(async (req, res) => {
+  const user = req.user
+  const response = await getPomodoros(user?.id)
+  // will default to status 200
+  res.send(response)
+}))
 
 /**
  * get pomodoro by id, restricted by user
  */
-pomodoroRouter.get('/:id', requireAuth, async (req, res) => {
-  try {
-    const user = req.user
-    const id = req.params.id
-    const response = await getPomodoroById(id)
-    if (response && user?.id !== response.userId) {
-      throw { message: { message: "not authorized to access resource" }, status: 403 }
-    }
-    res.send(response)
-  } catch (e) {
-    console.error(e)
-    res.send(e.message || { message: "something went wrong" }).status(e.status || 500)
+pomodoroRouter.get('/:id', asyncHandler(requireAuth), asyncHandler(async (req, res) => {
+  const user = req.user
+  const id = req.params.id
+  const response = await getPomodoroById(id)
+  if (response && user?.id !== response.userId) {
+    throw { message: "not authorized to access resource", status: 403 }
   }
-})
+  res.send(response)
+}))
 
 
 /**
  * create pomodoro
  */
-pomodoroRouter.post('/', requireAuth, async (req, res) => {
-  try {
-    // user will always exist with the requireAuth Middleware, the error is handled from there as well
-    const user = req.user
-    if (user) {
-      //validate inputs
-      const body = createValidator.parse(req.body)
-      const response = await createPomodoro({ userId: user.id, ...body })
-      res.send(response)
-    } else {
-      throw { message: { message: "unable to find user, this is a protected resource" }, status: 403 }
-    }
-
-
-  } catch (e) {
-    console.error(e)
-    res.send(e.message || { message: "something went wrong" }).status(e.status || 500)
+pomodoroRouter.post('/', asyncHandler(requireAuth), asyncHandler(async (req, res) => {
+  // user will always exist with the requireAuth Middleware, the error is handled from there as well
+  const user = req.user
+  if (user) {
+    //validate inputs
+    const body = createValidator.parse(req.body)
+    const response = await createPomodoro({ userId: user.id, ...body })
+    res.send(response)
   }
-})
+}))
 
 /**
  * update pomodoro by id
  */
-pomodoroRouter.patch('/:id', requireAuth, async (req, res) => {
-  try {
-    const id = req.params.id
-    const user = req.user
-    //validate inputs
-    const body = updateValidator.parse(req.body)
-    const existing = await getPomodoroById(body.id)
-    if (user === null) {
-      throw { message: { message: "unable to find user, this is a protected resource" }, status: 403 }
-    }
-    if (existing.userId !== user?.id) {
-      throw { message: { message: "user id of resource does not match current signed in user, this is a protected resource" }, status: 403 }
+pomodoroRouter.patch('/:id', asyncHandler(requireAuth), asyncHandler(async (req, res) => {
+  const id = req.params.id
+  const user = req.user
+  //validate inputs
+  const body = updateValidator.parse(req.body)
+  const existing = await getPomodoroById(body.id)
 
-    }
-    const response = await updatePomodoro({ ...body, id })
-    console.log(response)
-    res.send(response)
-  } catch (e) {
-    console.error(e)
-    res.send(e.message || { message: "something went wrong" }).status(e.status || 500)
+  if (existing.userId !== user?.id) {
+    throw { message: "user id of resource does not match current signed in user, this is a protected resource", status: 403 }
+
   }
-})
+  const response = await updatePomodoro({ ...body, id })
+  console.log(response)
+  res.send(response)
+}))
 
 
 /**
  * delete pomodoro
  */
-pomodoroRouter.delete('/:id', requireAuth, async (req, res) => {
-  try {
-    const id = req.params.id
+pomodoroRouter.delete('/:id', asyncHandler(requireAuth), asyncHandler(async (req, res) => {
+  const id = req.params.id
 
-    const response = await deletePomodoro(id)
-    if (response === true) res.status(200).send(response)
-    if (response === false) res.status(400).send(response)
-  } catch (e) {
-    console.error(e)
-    res.send(e.message || { message: "something went wrong" }).status(e.status || 500)
-  }
-})
+  const response = await deletePomodoro(id)
+  // if response is true send a 200, if false send a 400 bad request
+  res.status(response ? 200 : 400).send(response)
+}))
 
 export default pomodoroRouter

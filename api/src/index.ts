@@ -5,6 +5,7 @@ import pomodoroRouter from "./pomodoro/pomodoro.router.js"
 import tasksRouter from "./tasks/tasks.router.js"
 import authRouter from "./auth/auth.router.js"
 import cors from "cors";
+import { ErrorHandler } from "./middleware/errorHandler.middleware.js";
 
 const app = express()
 const port = 3000
@@ -22,7 +23,7 @@ app.use(cors({
 app.use(express.json())
 
 
-
+//programmatically add routers
 const routers = [
   { path: "/user", router: userRouter },
   { path: "/pomodoro", router: pomodoroRouter },
@@ -35,9 +36,9 @@ routers.forEach(({ path, router }) => {
   app.use(path, router)
 })
 
-app.on('error', (e) => {
-  console.error("uncaught exception", e)
-})
+// top level error handler, to use this properly express-async-handler must be used
+app.use(ErrorHandler)
+
 try {
   app.listen(port, () => {
     console.log(`listening on localhost:${port}`)

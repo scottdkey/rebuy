@@ -3,7 +3,6 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { NavItem } from "./components/NavItem/NavItem.tsx";
 import styles from "./Root.module.css";
 import { useAuthStore } from "./stores/auth.store.ts";
-import axios from "axios";
 import { useGetCurrentUserQuery } from "./hooks/user.hooks.ts";
 
 export const Root = () => {
@@ -24,18 +23,9 @@ export const Root = () => {
             <>
               <a
                 onClick={async () => {
-                  const res = await axios.get<boolean>(
-                    "http://localhost:3000/auth/signout",
-                    { withCredentials: true }
-                  );
-
-                  if (res.data) {
-                    removeUser();
-                    nav("/");
-                  }
-                  if (res.status >= 400) {
-                    alert("unable to sign out");
-                  }
+                  
+                  removeUser();
+                  nav("/");
                 }}
                 className={styles.signOutButton}
               >

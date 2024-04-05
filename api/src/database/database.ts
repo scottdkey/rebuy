@@ -15,7 +15,6 @@ export const query = async <T extends pg.QueryResultRow>(text: string, params?: 
     const data = await client.query<T>(text, params)
     await client.release()
     if (data.rows) {
-
       return data.rows.map((row: any) => {
         const incoming = row
         //parse dates to isoString automatically
@@ -24,24 +23,27 @@ export const query = async <T extends pg.QueryResultRow>(text: string, params?: 
 
         // automatically map any snake cause value to camelcase
         return snakeToCamel(incoming) as T
-
-
       })
     } else {
-      throw { message: { message: "no values found" }, status: 404 }
+      throw { message: "no values found", status: 404 }
     }
 
+    // all errors are caught within the error handler middleware
+    // we may want to reassign things from a specific context to provide value downstream
   } catch (e) {
+    //default error and status, may be reassigned later
     let status = 500
     let message = e.message || "postgres error"
 
     //error code for undefined value
+    // as more error codes are caught, they can be assigned correctly from here
+    // as this grows this might become a util function with all postgres errors
     if (e.code === "22P02") {
       status = 400
       message = "one of the expected values is undefined"
     }
     console.error(e, 'postgres error')
-    throw { message: { message }, status }
+    throw { message, status }
   }
 
 }

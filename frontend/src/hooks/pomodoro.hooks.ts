@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 
 
@@ -29,6 +29,9 @@ export const useCreatePomodoroMutation = () => useMutation({
       withCredentials: true
     })
     return res.data
+  },
+  onError: (err: AxiosError<Message>) => {
+    alert(JSON.stringify(err.response?.data.message, null, 2) || err.message);
   }
 })
 export const useUpdatePomodoroMutation = (id?: string) => useMutation({
@@ -37,6 +40,9 @@ export const useUpdatePomodoroMutation = (id?: string) => useMutation({
       withCredentials: true
     })
     return res.data
+  },
+  onError: (err: AxiosError<Message>) => {
+    alert(JSON.stringify(err.response?.data.message, null, 2) || err.message);
   }
 })
 export const useDeletePomodoroMutation = (id?: string) => useMutation({
@@ -45,5 +51,8 @@ export const useDeletePomodoroMutation = (id?: string) => useMutation({
       withCredentials: true
     })
     return res.data
+  },
+  onError: (err: AxiosError<Message>) => {
+    alert(JSON.stringify(err.response?.data.message, null, 2) || err.message);
   }
 })

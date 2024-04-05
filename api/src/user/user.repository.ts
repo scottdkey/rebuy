@@ -20,7 +20,7 @@ export const updateUser = async (user: IUpdateUser, id: string) => {
   }
   if (user.password && user.existingPassword && currentUser) {
     const verified = await comparePassword(user.existingPassword, currentUser?.password)
-    if (verified === false) throw { message: { message: "unable to verify current password, will not proceed" }, status: 403 }
+    if (verified === false) throw { message: "unable to verify current password, will not proceed", status: 403 }
     updates.push(await hashPassword(user.password))
     // allow for partial updates
     queryText = `${queryText}${updates.length > 1 ? "," : ""} password=$${updates.length}`

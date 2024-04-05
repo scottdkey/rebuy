@@ -1,6 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import axios, { AxiosError } from "axios";
 import { useAuthStore } from "../stores/auth.store.ts";
+import { useNavigate } from "react-router-dom";
 
 
 export const useGetCurrentUserQuery = () => {
@@ -22,7 +23,34 @@ export const useGetCurrentUserQuery = () => {
       if (res.status >= 400) {
         removeUser()
       }
-      
+
     },
   })
 }
+
+export const useSignUpMutation = () => {
+  const setUser = useAuthStore((state) => state.setUser);
+  const removeUser = useAuthStore((state) => state.removeUser);
+  const nav = useNavigate();
+  return useMutation({
+    mutationFn: async (signUpUser: ISignUpUser) => {
+      const res = await axios.post<JwtPayload>(
+        "http://localhost:3000/user",
+        signUpUser,
+        {
+          withCredentials: true
+        }
+      );
+      return res.data;
+    },
+    onSuccess: (data) => {
+      setUser(data);
+      nav("/timers");
+    },
+    onError: (err: AxiosError<Message>) => {
+      console.error(err, "unable to sign in");
+      removeUser();
+      alert(JSON.stringify(err.response?.data.message, null, 2) || err.message);
+    },
+  })
+};

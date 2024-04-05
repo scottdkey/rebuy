@@ -1,11 +1,10 @@
 import { query } from "../database/database.js"
-import { snakeToCamel } from "../util/snakeToCamel.util.js"
 
 export const createPomodoro = async ({ userId, nickname, timerTime, shortBreakTime, longBreakTime }: { userId: string, nickname: string, timerTime: number, shortBreakTime: number, longBreakTime: number }) => {
   const text = `INSERT INTO pomodoro(user_id, nickname, timer_time, short_break_time, long_break_time) VALUES ($1, $2, $3, $4, $5) RETURNING *;`
   const params = [userId, nickname, timerTime, shortBreakTime, longBreakTime]
   const result = await query<IPomodoro>(text, params)
-  return snakeToCamel(result[0])
+  return result[0]
 }
 
 export const getPomodoros = async (userId: string) => {
