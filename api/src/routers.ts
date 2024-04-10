@@ -1,4 +1,5 @@
 import authRouter from "./auth/auth.router.js";
+import healthRouter from "./health/health.router.js";
 import historyRouter from "./history/history.router.js";
 import pomodoroRouter from "./pomodoro/pomodoro.router.js";
 import taskRouter from "./task/task.router.js";
@@ -10,4 +11,5 @@ export const routers = [
   { path: "/task", router: taskRouter },
   { path: "/auth", router: authRouter },
   { path: "/history", router: historyRouter },
+  { path: "health", router: healthRouter }
 ]

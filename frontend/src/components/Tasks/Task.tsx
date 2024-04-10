@@ -13,6 +13,7 @@ import {
   useUpdateHistoryMutation,
 } from "../../hooks/history.hooks.ts";
 import { useHistoryStore } from "../../stores/history.store.ts";
+import { usePomodoroStore } from "../../stores/pomoodoro.store.ts";
 
 export const Task = ({ id }: { id?: string }) => {
   const { data: task, refetch } = useGetTaskById(id);
@@ -27,6 +28,7 @@ export const Task = ({ id }: { id?: string }) => {
     useGetHistoryById(historyId);
   const { mutateAsync: updateHistory } = useUpdateHistoryMutation(historyId);
   const [editing, setEditing] = useState(false);
+  const running = usePomodoroStore((state) => state.running);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -45,6 +47,7 @@ export const Task = ({ id }: { id?: string }) => {
       await updateTask(updateValue);
       // since this is just being updated, the value for this item just needs to be updated, the id will not change, and that is all that is passed into the component.
       await refetch();
+      await refetchAll();
     }
     setEditing(false);
   };
@@ -79,9 +82,20 @@ export const Task = ({ id }: { id?: string }) => {
   if (task) {
     return (
       <div className={styles.TaskContainer}>
+        {task.complete === false && running === false ? (
+          <Tooltip
+            id={`task-checkbox-${task.id}`}
+            className={styles.tooltip}
+            anchorSelect={`.task-checkbox-${task.id}`}
+          >
+            Unable to complete when timer isn't running
+          </Tooltip>
+        ) : null}
         <input
           type="checkbox"
           name="complete"
+          disabled={!running}
+          className={`task-checkbox-${task.id} ${styles.checkbox}`}
           checked={task.complete}
           onChange={async (e) => {
             const value = e.target.checked;
@@ -91,6 +105,7 @@ export const Task = ({ id }: { id?: string }) => {
               complete: value,
             });
             await refetch();
+            await refetchAll();
             // ensure history is defined and the current session hasn't ended
             if (history && history.endTime === null) {
               let completedTasks = history.completedTasks;

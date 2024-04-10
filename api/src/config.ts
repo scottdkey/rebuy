@@ -5,16 +5,18 @@ import { PoolConfig } from "pg";
 
 configDotenv()
 
-const { POSTGRES_PASSWORD, POSTGRES_USER, POSTGRES_DATABASE, POSTGRES_PORT, POSTGRES_HOST, SECRET_KEY } = process.env
+const { POSTGRES_PASSWORD, POSTGRES_USER, POSTGRES_DATABASE, POSTGRES_PORT, POSTGRES_HOST, SECRET_KEY, FRONTEND_URL } = process.env
 
 interface IConfig {
   jwtKey: string
   postgres: PoolConfig
   cookieName: string
   cookieOptions: CookieOptions
+  frontendUrl: string
 }
 
 export const config: IConfig = {
+  frontendUrl: FRONTEND_URL || 'valueNotSetCorrectly',
   cookieName: "rebuy",
   jwtKey: SECRET_KEY || "",
   postgres: {

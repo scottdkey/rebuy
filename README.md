@@ -5,32 +5,118 @@ To use this application please have [docker-compose](https://docs.docker.com/com
 You will also need `Node 21.7.1`, which can be installed via [nvm](https://nodejs.org/en/download/package-manager) or whatever node version manager you prefer.
 
 
-To run the [frontend](./frontend/README.md) please refer to that documentation file located within its folder.
+To run the [frontend](./frontend/README.md) independently of docker-compose please refer to that documentation file located within its folder.
 
-Similarly to run the [backend](./api/README.md) please refer to that documentation located within its folder.
+Similarly to run the [backend](./api/README.md) independently of docker-compose please refer to that documentation located within its folder.
 
-## Running the database
+## Running full stack via docker-compose
 
-The database is a `PostgreSQL` database setup with `docker-compose`. To fully setup the database please run the command:
+### development mode
+
+please use this to run the application at this time
 
 ```bash
 docker-compose up -d
 ```
 
-This will spin up the database and migrate everything for development mode. 
+### production mode
 
-To stop the database please run
+This will pull containers from docker hub and run application in appropriate version based on `.env` value. If running in production mode, please ensure this value is defined or this will not work.
 
+At this time the demo should be run in this mode.
+
+```bash
+docker-compose -f docker-compose-prod.yml up -d
+```
+
+when running in either mode frontend application will be available by default at:
+
+```
+http://localhost:5173
+```
+
+If `.env` values have been updated, please adjust that accordingly
+
+## View Logs
+
+### development mode
+```bash
+docker-compose logs
+```
+
+### production mode
+```bash
+docker-compose -f docker-compose-prod.yml logs 
+```
+
+add the `-f` flag at the end to follow all log updates from either, i.e.:
+
+```bash
+docker-compose -f docker-compose-prod.yml logs -f
+```
+
+## Stop the application
+
+### development mode
 ```bash
 docker-compose down
 ```
 
-To delete the database volume and remove all containers please run
+### production mode
+```bash
+docker-compose -f docker-compose-prod.yml down 
+```
 
+## Delete the application, as well as database data from local environment
+
+### development mode
 ```bash
 docker-compose down -v
 ```
 
+### production mode
+```bash
+docker-compose -f docker-compose-prod.yml down -v
+```
+
+## Build or rebuild containers
+
+this should be used after a new node_module is installed as the container will not have that value
+
+### development mode
+```bash
+docker-compose build
+```
+
+### production mode
+```bash
+docker-compose -f docker-compose-prod.yml build
+```
+## Push containers to docker hub
+
+this should be used after a new node_module is installed as the container will not have that value
+
+### development mode
+```bash
+docker-compose push
+```
+
+### production mode
+```bash
+docker-compose -f docker-compose-prod.yml push 
+```
+
+## Running just the database(prod or dev) -- still recommended if you are running the applications directly on machine
+
+### development mode
+```bash
+docker-compose postgres up -d
+```
+
+### production mode
+```bash
+docker-compose postgres -f docker-compose-prod.yml up -d
+```
 
 ## Application Decisions
 

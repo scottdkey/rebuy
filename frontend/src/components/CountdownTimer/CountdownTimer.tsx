@@ -15,7 +15,8 @@ export const CountdownTimer = () => {
   const active = usePomodoroStore((state) => state.active);
   const [timer, setTimer] = useState(active ? active.timerTime : 0);
   const [breakTimer, setBreakTimer] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
+  const running = usePomodoroStore((s) => s.running);
+  const setRunning = usePomodoroStore((s) => s.setRunning);
   const [breakIsRunning, setBreakIsRunning] = useState(false);
   const [longBreak, setLongBreak] = useState(0);
   const [shortBreak, setShortBreak] = useState(0);
@@ -31,20 +32,18 @@ export const CountdownTimer = () => {
   const { mutateAsync: createHistory } = useCreateHistoryMutation();
   const { mutateAsync: updateHistory } = useUpdateHistoryMutation(historyId);
 
-  if (active === null) {
-    return <div>please select or create an active item to proceed</div>;
-  }
-
   // multiple use effects focusing on different event changes
 
   useEffect(() => {
-    // if the active item changes, stop all timers
-    setBreakIsRunning(false);
-    setIsRunning(false);
-    // set various local state to current active values
-    setTimer(active.timerTime);
-    setLongBreak(active.longBreakTime);
-    setShortBreak(active.shortBreakTime);
+    if (active) {
+      // if the active item changes, stop all timers
+      setBreakIsRunning(false);
+      setRunning(false);
+      // set various local state to current active values
+      setTimer(active.timerTime);
+      setLongBreak(active.longBreakTime);
+      setShortBreak(active.shortBreakTime);
+    }
   }, [active]);
 
   useEffect(() => {
@@ -53,7 +52,7 @@ export const CountdownTimer = () => {
     let breakCountdown: NodeJS.Timeout;
 
     // base timer
-    if (isRunning) {
+    if (running) {
       setIsPaused(false);
       countdown = setInterval(() => {
         setTimer((prevTime) => {
@@ -77,7 +76,7 @@ export const CountdownTimer = () => {
             return prevTime - 1;
           } else {
             setBreakIsRunning(false);
-            setIsRunning(true);
+            setRunning(true);
             clearInterval(breakCountdown);
             return 0;
           }
@@ -90,36 +89,47 @@ export const CountdownTimer = () => {
       clearInterval(countdown);
       clearInterval(breakCountdown);
     };
-  }, [isRunning, breakIsRunning]);
+  }, [running, breakIsRunning]);
 
   // in this component I've opted to have handlers for various logic, this ensures reusability from this scope
   const startOrResumeTimer = async () => {
     setIsPaused(false);
-    setIsRunning(true);
+    setRunning(true);
+
     if (breakIsRunning) {
       setBreakIsRunning(false);
     }
 
     // if timer isn't running, create a new history
     // otherwise don't
-    if (timer < active.timerTime === false) {
-      await createHistory(
-        {
-          startTime: new Date().toISOString(),
-        },
-        {
-          onSuccess: (data) => {
-            setHistoryId(data.id);
+    try {
+      if (active && timer < active.timerTime === false) {
+        await createHistory(
+          {
+            startTime: new Date().toISOString(),
           },
-          onError: HandleAxiosError,
-        }
-      );
+          {
+            onSuccess: (data) => {
+              setHistoryId(data.id);
+            },
+            onError: HandleAxiosError,
+          }
+        );
+      }
+    } catch (e) {
+      console.error(JSON.stringify(e, null, 2));
     }
   };
 
+  if (active === null) {
+    return <>please select or create an active item to proceed</>;
+  }
+
   const resetTimer = async () => {
-    setIsRunning(false);
-    setTimer(active.timerTime);
+    setRunning(false);
+    if (active) {
+      setTimer(active.timerTime);
+    }
     // if timer is reset send endTime
     if (history) {
       await updateHistory({
@@ -144,7 +154,7 @@ export const CountdownTimer = () => {
   };
 
   const pauseTimer = async () => {
-    setIsRunning(false);
+    setRunning(false);
     if (history && isPaused === false) {
       await updateHistory({
         endTime: null,
@@ -156,13 +166,13 @@ export const CountdownTimer = () => {
     setIsPaused(true);
   };
 
-  if (active) {
+  if (active !== null) {
     return (
       <div className={styles.container}>
-        <h3 className={`${styles.title}`}>{active?.nickname} timer</h3>
+        <h3 className={`${styles.title}`}>{active.nickname} timer</h3>
         <h2
           className={`${styles.baseRunning} ${
-            isRunning ? styles.running : styles.stopped
+            running ? styles.running : styles.stopped
           }`}
         >
           {/* format seconds to minutes and seconds */}
@@ -170,9 +180,10 @@ export const CountdownTimer = () => {
         </h2>
         <div className={styles.controlsContainer}>
           {/* toggle running states */}
-          {!isRunning ? (
+          {!running ? (
             <button onClick={startOrResumeTimer}>
               {/* resume if timer has started or start if it hasn't */}
+
               {timer < active.timerTime ? "resume" : "start"}
             </button>
           ) : (
@@ -182,9 +193,9 @@ export const CountdownTimer = () => {
             <button onClick={resetTimer}>Reset</button>
           )}
           {/* allow pauses expressed as a break */}
-          {isRunning ? <button onClick={pauseTimer}>pause</button> : null}
+          {running ? <button onClick={pauseTimer}>pause</button> : null}
           {/* if running but not on a break, or not on a break and the timer has started(i.e. paused) */}
-          {(isRunning && breakIsRunning === false) ||
+          {(running && breakIsRunning === false) ||
           (breakIsRunning === false && timer < active.timerTime) ? (
             <>
               <button onClick={takeShortBreak}>

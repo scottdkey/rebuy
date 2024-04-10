@@ -4,6 +4,7 @@
   justify-content: flex-start;
   align-items: center;
   min-height: 400px;
+  margin-bottom: auto;
 }
 
 .controlsContainer {

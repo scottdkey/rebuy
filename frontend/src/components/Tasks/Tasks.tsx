@@ -1,15 +1,24 @@
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useState } from "react";
 import { useGetAllTasks } from "../../hooks/task.hooks.ts";
 import styles from "./Tasks.module.css";
 import { Task } from "./Task.tsx";
 
 export const Tasks = () => {
   const { data: tasks } = useGetAllTasks();
+  const [hidden, setHidden] = useState(true);
 
   const Base = ({ children }: PropsWithChildren) => {
     return (
       <div className={styles.container}>
         <h3 className={styles.title}>tasks</h3>
+        <button
+          className={styles.completeButton}
+          onClick={() => {
+            setHidden(!hidden);
+          }}
+        >
+          {hidden ? "show" : "hide"} complete
+        </button>
         {children}
         <Task />
       </div>
@@ -19,9 +28,13 @@ export const Tasks = () => {
   if (tasks) {
     return (
       <Base>
-        {tasks.map((task) => (
-          <Task key={task.id} id={task.id} />
-        ))}
+        {tasks.map((task) => {
+          const hideElement = hidden && task.complete;
+
+          if (!hideElement) {
+            return <Task key={task.id} id={task.id} />;
+          }
+        })}
       </Base>
     );
   }

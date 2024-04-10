@@ -1,17 +1,29 @@
 import styles from "./Auth.module.css";
 import { useSignInMutation } from "../../hooks/auth.hooks.ts";
+import { z } from "zod";
 
 export const SignIn = () => {
   const { mutateAsync } = useSignInMutation();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data: ISignInUser = {
-      username: event.currentTarget.username.value,
-      password: event.currentTarget.password.value,
-    };
+    try {
+      event.preventDefault();
+      const data: ISignInUser = z
+        .object({
+          username: z.string(),
+          password: z.string(),
+        })
+        .parse({
+          username: event.currentTarget.username.value,
+          password: event.currentTarget.password.value,
+        });
 
-    await mutateAsync(data);
+      await mutateAsync(data);
+    } catch (e: any) {
+      console.error(
+        "unable to validate handleSubmit payload something went wrong"
+      );
+    }
   };
   return (
     <form className={styles.formContainer} onSubmit={handleSubmit}>

@@ -3,6 +3,7 @@ import axios, { AxiosError } from "axios";
 import { useAuthStore } from "../stores/auth.store.ts";
 import { useNavigate } from "react-router-dom";
 import { HandleAxiosError } from "../util/HandleAxiosError.util.ts";
+import { backendURL } from "../util/constants.ts";
 
 export const useSignInMutation = () => {
   const setUser = useAuthStore((state) => state.setUser);
@@ -11,7 +12,7 @@ export const useSignInMutation = () => {
   return useMutation({
     mutationFn: async (signInUser: ISignInUser) => {
       const res = await axios.post<JwtPayload>(
-        "http://localhost:3000/auth/signin",
+        `${backendURL}/auth/signin`,
         signInUser, {
         withCredentials: true
       });

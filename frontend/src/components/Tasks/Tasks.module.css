@@ -8,8 +8,6 @@
   min-height: 400px;
 }
 
-
-
 .title {
   margin-top: 0px;
 }
@@ -37,14 +35,10 @@
   margin-right: auto;
 }
 
-.HiddenContainer {
-  display: none
-}
-
 .TaskName {
   margin-left: 1em;
   margin-right: 2em;
-  min-width: 5em;;
+  min-width: 5em;
 }
 
 .EditButton {
@@ -60,4 +54,8 @@
 .tooltip {
   text-wrap: wrap;
   max-width: 50%;
+}
+
+.completeButton {
+  margin-bottom: 0.5em;
 }

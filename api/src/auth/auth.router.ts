@@ -10,6 +10,7 @@ import asyncHandler from "express-async-handler"
 
 const authRouter = Router()
 
+
 const signInValidator = z.object({
   username: z.string(),
   password: z.string()
@@ -26,12 +27,17 @@ authRouter.post('/signin', asyncHandler(async (req, res) => {
     const signedJwt = signJWT({ id: user?.id, username: user?.username })
     res.cookie(config.cookieName, signedJwt, config.cookieOptions)
 
-    res.send({ message: "sign in" })
+    res.send({ id: user.id, username: user.username })
   } else {
     throw { message: "unable to find user with that username please try again", status: 404 }
 
   }
 }))
+
+authRouter.get("/signOut", (_, res) => {
+  res.clearCookie(config.cookieName)
+  res.send('signed out')
+})
 
 
 

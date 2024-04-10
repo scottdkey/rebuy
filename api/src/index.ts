@@ -9,12 +9,10 @@ const port = 3000
 //use cookie middleware
 app.use(cookieParser())
 // use cors
-// when accessing the frontend please ensure that you are using localhost and not 127.0.0.1
 app.use(cors({
   origin: 'http://localhost:5173',
   credentials: true,
 }));
-
 
 //parse body as json
 app.use(express.json())

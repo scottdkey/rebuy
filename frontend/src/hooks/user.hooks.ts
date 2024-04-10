@@ -3,6 +3,7 @@ import axios, { AxiosError } from "axios";
 import { useAuthStore } from "../stores/auth.store.ts";
 import { useNavigate } from "react-router-dom";
 import { HandleAxiosError } from "../util/HandleAxiosError.util.ts";
+import { backendURL } from "../util/constants.ts";
 
 
 export const useGetCurrentUserQuery = () => {
@@ -14,16 +15,19 @@ export const useGetCurrentUserQuery = () => {
   return useQuery({
     queryKey: ["getMe"],
     queryFn: async () => {
-      const res = await axios.get<JwtPayload>("http://localhost:3000/user", {
+      const res = await axios.get<JwtPayload>(`${backendURL}/user`, {
         withCredentials: true
       })
-      if (res.status === 200) {
+
+      console.log({ data: res.data, status: res.status })
+      console.log(res.data)
+      if (res.data && res.data.id) {
+
         setUser(res.data)
         return res.data
       }
-      if (res.status >= 400) {
-        removeUser()
-      }
+      removeUser()
+      return null
 
     },
   })
@@ -36,7 +40,7 @@ export const useSignUpMutation = () => {
   return useMutation({
     mutationFn: async (signUpUser: ISignUpUser) => {
       const res = await axios.post<JwtPayload>(
-        "http://localhost:3000/user",
+        `${backendURL}/user`,
         signUpUser,
         {
           withCredentials: true

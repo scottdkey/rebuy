@@ -1,10 +1,10 @@
 version: "3.9"
-name: rebuy
+
 services:
   postgres:
-    container_name: rebuy-postgres
+    container_name: postgres
     image: postgres:latest
-    restart: unless-stopped
+    restart: always
     env_file:
       - .env
     environment:
@@ -19,12 +19,13 @@ services:
     networks:
       - app-network
   api:
-    container_name: rebuy-api
+    container_name: api
     image: scottdkey/rebuy-api:${API_VERSION}
+    pull_policy: always
     build:
       context: ./api
       dockerfile: Dockerfile
-      target: development
+      target: production
     restart: unless-stopped
     ports:
       - ${API_PORT}:3000
@@ -41,17 +42,18 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_PORT=${POSTGRES_PORT}
       - SECRET_KEY=${SECRET_KEY}
-    volumes:
-      - ./api/src:/app/api/src
+    depends_on:
+      - postgres
     networks:
       - app-network
   frontend:
     container_name: rebuy-frontend
     image: scottdkey/rebuy-frontend:${API_VERSION}
+    pull_policy: always
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      target: development
+      target: production
     restart: unless-stopped
     ports:
       - ${FRONTEND_PORT}:5173
@@ -65,7 +67,6 @@ services:
       - ./frontend/src:/app/src
     networks:
       - app-network
-
 networks:
   app-network:
     driver: bridge

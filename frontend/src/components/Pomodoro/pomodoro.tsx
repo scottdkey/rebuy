@@ -44,9 +44,15 @@ export const Pomodoro = ({ id }: { id?: string }) => {
         </Modal>
         <button
           className={`${styles.btn} ${
-            active?.id === id ? styles.activeBtn : ""
+            active && active.id === id ? styles.activeBtn : ""
           } `}
-          onClick={() => setActive(pomodoro)}
+          onClick={() => {
+            try {
+              setActive(pomodoro);
+            } catch (e) {
+              console.error(e, " unable to set active");
+            }
+          }}
         >
           set active
         </button>
@@ -59,7 +65,7 @@ export const Pomodoro = ({ id }: { id?: string }) => {
             await deletePomodoro();
             await refetchAll();
             // if current active item is the one being deleted, remove it
-            if (active?.id === id) {
+            if (active && active.id === id) {
               setActive(null);
             }
           }}

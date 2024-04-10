@@ -26,15 +26,24 @@ export const PomodoroCreateOrUpdateForm = ({ id }: { id?: string }) => {
     };
     if (id) {
       const res = await updatePomodoro({ ...data, id });
-      await refetch();
-      await refetchAll();
-      if (active && id === active.id) {
-        console.log("update active");
+
+      if (active === null) {
         setActive(res);
       }
+      if (active !== null && active.id === res.id) {
+        setActive(res);
+      }
+      await refetch();
+      await refetchAll();
     }
     if (!id) {
-      await createPomodoro(data);
+      const res = await createPomodoro(data);
+      if (active === null) {
+        setActive(res);
+      }
+      if (active !== null && active.id === res.id) {
+        setActive(res);
+      }
       await refetchAll();
     }
   };
