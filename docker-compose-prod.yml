@@ -47,7 +47,7 @@ services:
     networks:
       - app-network
   frontend:
-    container_name: rebuy-frontend
+    container_name: frontend
     image: scottdkey/rebuy-frontend:${API_VERSION}
     pull_policy: always
     build:
@@ -63,8 +63,6 @@ services:
       - ${FRONTEND_PORT}
     environment:
       - VITE_BACKEND_URL=http://localhost:${API_PORT}
-    volumes:
-      - ./frontend/src:/app/src
     networks:
       - app-network
 networks:

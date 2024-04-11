@@ -81,7 +81,15 @@ docker-compose -f docker-compose-prod.yml down -v
 
 ## Build or rebuild containers
 
-this should be used after a new node_module is installed as the container will not have that value
+this should be used after a new node_module is installed as the container will not have that value.
+
+It is also important that because the containers are named the same if you are running in one mode, you need to rebuild into the other mode.
+
+i.e. if you have been running the development build in order to properly view your changes in production mode you will need to build and push
+
+if you have been running in production mode, you will need to build development to ensure you are using containers running the development scripts.
+
+This could be circumvented by naming the containers different names, but I'm undecided if that is the correct path forward.
 
 ### development mode
 ```bash
@@ -115,7 +123,7 @@ docker-compose postgres up -d
 
 ### production mode
 ```bash
-docker-compose postgres -f docker-compose-prod.yml up -d
+docker-compose -f docker-compose-prod.yml up postgres  -d
 ```
 
 ## Application Decisions
