@@ -11,5 +11,5 @@ export const routers = [
   { path: "/task", router: taskRouter },
   { path: "/auth", router: authRouter },
   { path: "/history", router: historyRouter },
-  { path: "health", router: healthRouter }
+  { path: "/health", router: healthRouter }
 ]
